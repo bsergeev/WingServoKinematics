@@ -1,22 +1,28 @@
-#include "mainwidget.h"
+#include "glwidget.h"
 
 #include <QMouseEvent>
 #include <QPainter>
 
 #include <math.h>
 
-MainWidget::MainWidget(QWidget* parent)
+GLWidget::GLWidget(QWidget* parent)
   : QOpenGLWidget(parent)
 {
 }
 
-void MainWidget::initializeGL() {
+void GLWidget::setServoRotation(int servoPercent) {
+  // 100% of servo travel equates to 40 degrees
+  as = 0.4*servoPercent * RADIAN_INV;
+  update();
+}
+
+void GLWidget::initializeGL() {
   initializeOpenGLFunctions();
 
   glClearColor(0.92f, 0.95f, 1.0f, 1.0f);
 }
 
-void MainWidget::calculatePositions() {
+void GLWidget::calculatePositions() {
   // Initial coordinates for as = 0
   const double x0i = -ls*sin(bs);
   const double y0i = ls*cos(bs);
@@ -43,7 +49,7 @@ void MainWidget::calculatePositions() {
 
 }
 
-void MainWidget::paintGL() {
+void GLWidget::paintGL() {
   glClearColor(0.92f, 0.95f, 1.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -71,7 +77,7 @@ void MainWidget::paintGL() {
   painter.end();
 }
 
-void MainWidget::resizeGL(int w, int h) {
+void GLWidget::resizeGL(int w, int h) {
   if (w <= 0 || h <= 0) {
     return; // not yet initialized
   }
@@ -93,7 +99,7 @@ void MainWidget::resizeGL(int w, int h) {
   m_y0 = static_cast<decltype(m_y0)>(PADDING/2 + std::round(0.5*((m_screenH - PADDING) + (maxY + minY)*m_scale)));
 }
 
-void MainWidget::wheelEvent(QWheelEvent* e) {
+void GLWidget::wheelEvent(QWheelEvent* e) {
   QPoint n = e->angleDelta();
   const int dx = n.x();
   const int dy = n.y();
@@ -108,16 +114,16 @@ void MainWidget::wheelEvent(QWheelEvent* e) {
   update();
 }
 
-void MainWidget::mousePressEvent(QMouseEvent* e) {
+void GLWidget::mousePressEvent(QMouseEvent* e) {
   m_mousePressPosition = QVector2D(e->localPos());
   m_dragging = true;
 }
 
-void MainWidget::mouseReleaseEvent(QMouseEvent*) {
+void GLWidget::mouseReleaseEvent(QMouseEvent*) {
   m_dragging = false;
 }
 
-void MainWidget::mouseMoveEvent(QMouseEvent* e) {
+void GLWidget::mouseMoveEvent(QMouseEvent* e) {
   if (m_dragging) {
     auto newMousePos = QVector2D(e->localPos());
     const QVector2D diff = newMousePos - m_mousePressPosition;
@@ -132,7 +138,7 @@ void MainWidget::mouseMoveEvent(QMouseEvent* e) {
     update();
   }
 }
-void MainWidget::keyPressEvent(QKeyEvent* keyevent) {
+void GLWidget::keyPressEvent(QKeyEvent* keyevent) {
   const int key = keyevent->key();
   if (key == Qt::Key_F) {
    // fitAll();

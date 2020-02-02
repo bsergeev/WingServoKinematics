@@ -5,12 +5,15 @@
 #include <QOpenGLWidget>
 #include <QVector2D>
 
-class MainWidget : public QOpenGLWidget, protected QOpenGLFunctions
+class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
   Q_OBJECT
 
 public:
-  explicit MainWidget(QWidget* parent = nullptr);
+  explicit GLWidget(QWidget* parent = nullptr);
+
+public slots:
+  void setServoRotation(int angle);
 
 protected:
   void mousePressEvent  (QMouseEvent* e) override;
@@ -33,9 +36,9 @@ private:
   // Linkage geometry
   static constexpr double RADIAN_INV = 0.017453292519943295769236907684886;
   double ls =  10.0; // mm - servo arm length
-  double bs = -30.0*RADIAN_INV; // degrees - servo arm initial angle
+  double bs = 0.0*RADIAN_INV; // degrees - servo arm initial angle
   double lc =  15.0; // mm - control surface arm length
-  double bc = -30.0*RADIAN_INV; // degrees - control surface arm initial angle
+  double bc =  30.0*RADIAN_INV; // degrees - control surface arm initial angle
   double xc =  75.0; // mm - distance between servo and control surface axes
 
   double L;        // mm - pushrod length

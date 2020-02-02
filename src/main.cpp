@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QSurfaceFormat>
 
-#include "mainwidget.h"
+#include "mainwindow.h"
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
@@ -13,8 +13,8 @@ int main(int argc, char* argv[]) {
     app.setApplicationName("servo");
     app.setApplicationVersion("0.1");
 
-    MainWidget widget;
-    widget.show();
+    MainWindow w;
+    w.show();
 
     return app.exec();
 }

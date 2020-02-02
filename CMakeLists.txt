@@ -14,11 +14,13 @@ set(CMAKE_AUTOMOC ON)
 
 set(include_dirs  "${PROJECT_SOURCE_DIR}/src")
 set(headers
-  src/mainwidget.h
+  src/mainwindow.h
+  src/glwidget.h
 )
 set(sources
   src/main.cpp
-  src/mainwidget.cpp
+  src/mainwindow.cpp
+  src/glwidget.cpp
 )
 message(STATUS "-> Sources: ${sources}")
 
