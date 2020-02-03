@@ -40,8 +40,8 @@ MainWindow::MainWindow()
   QSlider* slider = nullptr;
   if (slider = new (std::nothrow) QSlider(Qt::Vertical)) {
     slider->setRange(-150, 150);
-    slider->setSingleStep(5);
-    slider->setPageStep(30);
+    slider->setSingleStep(1);
+    slider->setPageStep(10);
     slider->setTickInterval(10);
     slider->setTickPosition(QSlider::TicksRight);
   }

@@ -37,7 +37,8 @@ private:
 
   // Linkage geometry
   static constexpr double DGR_TO_RADIAN = 0.017453292519943295769236907684886;
-#ifdef FLAPS
+#if 1
+  // FLAPS
   double ls =   8.0;               // mm - servo arm length
   double bs = -45.0*DGR_TO_RADIAN; // radians - servo arm initial angle
 
@@ -49,6 +50,7 @@ private:
   double ac_MAXup =  7.0*DGR_TO_RADIAN; // radians - MAX control surface rotation up
   double ac_MAXdn = 70.0*DGR_TO_RADIAN; // radians - MAX control surface rotation down
 #else
+  // Ailerons
   double ls =   6.0;               // mm - servo arm length
   double bs = -30.0*DGR_TO_RADIAN; // radians - servo arm initial angle
 
