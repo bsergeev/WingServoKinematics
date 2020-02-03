@@ -17,7 +17,7 @@ public:
   MainWindow();
 
   void setStateText(const QString& txt);
-  void setSliderValue(int value);
+  void setSliderDegree(int value);
 
 protected:
   void keyPressEvent(QKeyEvent* event) override;

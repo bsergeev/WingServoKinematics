@@ -15,9 +15,8 @@ GLWidget::GLWidget(MainWindow* parent)
   setMinimumSize(900, 300);
 }
 
-void GLWidget::setServoRotation(int servoPercent) {
-  // 100% of servo travel equates to 40 degrees
-  as = 0.4*(-servoPercent) * DGR_TO_RADIAN;
+void GLWidget::setServoRotation(int degrees) {
+  as = degrees * DGR_TO_RADIAN;
   update();
 }
 
@@ -48,7 +47,7 @@ bool GLWidget::calculatePositions() {
   const double d = sqrt(dx*dx + dy*dy);
   if (d > L + lc) {
     as = lastGoodAs;
-    m_parent->setSliderValue(-as * 2.5 / DGR_TO_RADIAN);
+    m_parent->setSliderDegree(as / DGR_TO_RADIAN);
     m_parent->setStateText(state + tr(" - Linkage bind"));
     return false;
   }
@@ -67,7 +66,7 @@ bool GLWidget::calculatePositions() {
   const bool dnExceeded = (ac > 0.0)?  ac > ac_MAXdn : false;
   if (upExceeded || dnExceeded) {
     as = lastGoodAs;
-    m_parent->setSliderValue(-as*2.5/DGR_TO_RADIAN);
+    m_parent->setSliderDegree(as / DGR_TO_RADIAN);
     state += tr(" - exceeded deflection %1").arg((upExceeded)? tr("UP") : tr("DOWN"));
   } else {
     lastGoodAs = as;
@@ -126,23 +125,17 @@ void GLWidget::paintGL() {
     QPainter painter;
     painter.begin(this);
 
-    auto [ix1, iy1] = realToScrCoords(x0, -y0);
-#if 0
-    painter.setPen(QPen(Qt::blue));
-    auto [ix0, iy0] = realToScrCoords(0.0, 0.0);
-    painter.drawLine(ix0, iy0, ix1, iy1);
-#else
     drawServoArm(&painter);
-    painter.setPen(QPen(Qt::blue));
-#endif
+    painter.setPen(QPen(Qt::blue, 2));
 
+    auto [ix1, iy1] = realToScrCoords(x0, -y0);
     auto [ix2, iy2] = realToScrCoords(x3, -y3);
     painter.drawLine(ix1, iy1, ix2, iy2);
 
     auto [ix3, iy3] = realToScrCoords(xc, 0.0);
     painter.drawLine(ix2, iy2, ix3, iy3);
 
-    painter.setPen(QPen(Qt::black));
+    painter.setPen(QPen(Qt::black, 1));
     auto [ix4, iy4] = realToScrCoords(xc + lc * cos(ac), -lc * sin(ac));
     painter.drawLine(ix3, iy3, ix4, iy4);
 
