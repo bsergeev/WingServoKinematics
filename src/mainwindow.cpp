@@ -1,34 +1,36 @@
 #include "mainwindow.h"
 #include "glwidget.h"
 
-#include <QSlider>
-#include <QVBoxLayout>
+#include <QApplication>
 #include <QHBoxLayout>
 #include <QKeyEvent>
-#include <QApplication>
+#include <QLabel>
+#include <QSlider>
+#include <QVBoxLayout>
+
+#include <algorithm>
 
 MainWindow::MainWindow()
 {
-    glWidget = new GLWidget(this);
+    m_glWidget = new GLWidget(this);
 
-    servoSlider = createSlider();
-    connect(servoSlider, &QSlider::valueChanged, glWidget, &GLWidget::setServoRotation);
+    m_servoSlider = createSlider();
+    connect(m_servoSlider, &QSlider::valueChanged, m_glWidget, &GLWidget::setServoRotation);
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     QHBoxLayout* container = new QHBoxLayout;
-    container->addWidget(glWidget);
-    container->addWidget(servoSlider);
+    container->addWidget(m_glWidget);
+    container->addWidget(m_servoSlider);
 
     QWidget* w = new QWidget();
     w->setLayout(container);
     mainLayout->addWidget(w);
-//     dockBtn = new QPushButton(tr("Undock"), this);
-//     connect(dockBtn, &QPushButton::clicked, this, &MainWindow::dockUndock);
-//     mainLayout->addWidget(dockBtn);
+    m_stateLabel = new QLabel(tr("Positions"), this);
+    mainLayout->addWidget(m_stateLabel);
 
     setLayout(mainLayout);
 
-    servoSlider->setValue(0);
+    m_servoSlider->setValue(0);
 
     setWindowTitle(tr("Wing Servo Kinematics"));
 }
@@ -43,4 +45,32 @@ MainWindow::MainWindow()
     slider->setTickPosition(QSlider::TicksRight);
   }
   return slider;
+}
+
+void MainWindow::keyPressEvent(QKeyEvent* e) {
+  if (e->key() == Qt::Key_Space) {
+    m_servoSlider->setValue(0);
+  } else {
+    QWidget::keyPressEvent(e);
+  }
+}
+
+void MainWindow::setStateText(const QString& txt) {
+  m_stateLabel->setText(txt);
+}
+
+void MainWindow::setSliderValue(int value) {
+  const int sliderValue = std::clamp<int>(value, m_servoSlider->minimum(), m_servoSlider->maximum());
+  m_servoSlider->setValue(sliderValue);
+
+  update();
+}
+
+void MainWindow::wheelEvent(QWheelEvent* e) {
+  QPoint n = e->angleDelta();
+  const int dx = n.x();
+  const int dy = n.y();
+  const int d = (abs(dx) > abs(dy)) ? dx : dy;
+
+  setSliderValue(m_servoSlider->value() + std::round(0.02*d));
 }
