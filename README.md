@@ -9,7 +9,7 @@ Qt 5
 ## Build & Run
 To build the app in Windows or Linux, run `./build.sh` in Bash (on Windows, use Git Bash).  
 `bash.sh` takes two optional parameter:  
-* Project name: default `ogl`
+* Project name (default `servo`)
 * Build type: `Debug` or `Release` (default `Debug`)  
   
 The resulting executable will be in _build.Linux_ or _build.Windows_.  
