@@ -1,5 +1,7 @@
 #pragma once
 
+#include "util.h"
+
 #include <QString>
 #include <QWidget>
 
@@ -17,7 +19,7 @@ public:
   MainWindow();
 
   void setStateText(const QString& txt);
-  void setSliderDegree(int value);
+  void setSliderDegree(RadianValue angle);
 
 protected:
   void keyPressEvent(QKeyEvent* event) override;

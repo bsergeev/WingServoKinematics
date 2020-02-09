@@ -1,5 +1,7 @@
 #pragma once
 
+#include "util.h"
+
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLWidget>
@@ -18,8 +20,12 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 public:
   explicit GLWidget(MainWindow* parent = nullptr);
 
-public slots:
-  void setServoRotation(int angle);
+  static constexpr double DGR_TO_RADIAN = 0.017453292519943295769236907684886;
+  // 100% of servo travel equals to 40 degrees
+  static constexpr RadianValue percent2Radian(double percent) noexcept { return static_cast<RadianValue>(0.4 * percent * DGR_TO_RADIAN); }
+  static constexpr double radian2Percent(RadianValue radians) noexcept { return 2.5 * radians / DGR_TO_RADIAN; }
+                                                                                           
+  void setServoRotation(RadianValue angle);
 
 protected:
   void initializeGL()         override;
@@ -36,14 +42,14 @@ private:
   void drawServoArm(QPainter* painter) const;
 
   // Linkage geometry
-  static constexpr double DGR_TO_RADIAN = 0.017453292519943295769236907684886;
 #if 1
   // FLAPS
+  RadianValue as0 = percent2Radian(-100.0/* % */); // radians - servo arm angle at which control is at 0
   double ls =   8.0;               // mm - servo arm length
-  double bs = -45.0*DGR_TO_RADIAN; // radians - servo arm initial angle
+  double bs = 0*DGR_TO_RADIAN; // radians - servo arm initial angle
 
   double lc =  10.0;               // mm - control surface arm length
-  double bc =   8.0*DGR_TO_RADIAN; // radians - control surface arm initial angle
+  double bc =   -15*DGR_TO_RADIAN; // radians - control surface arm initial angle
 
   double xc =  58.0;               // mm - distance between servo and control surface axes
 
@@ -51,6 +57,7 @@ private:
   double ac_MAXdn = 70.0*DGR_TO_RADIAN; // radians - MAX control surface rotation down
 #else
   // Ailerons
+  RadianValue as0{};               // radians - servo arm angle at which control is at 0
   double ls =   6.0;               // mm - servo arm length
   double bs = -30.0*DGR_TO_RADIAN; // radians - servo arm initial angle
 
@@ -67,9 +74,9 @@ private:
   double x0, y0;   // servo arm's tip
   double x3, y3;   // control horn's tip
 
-  double as = 0.0;         // radians - servo arm rotation
-  double lastGoodAs = 0.0; // radians - last known good servo arm rotation
-  double ac = 0.0;         // radians - control surface rotation
+  RadianValue as{};         // radians - servo arm rotation
+  RadianValue lastGoodAs{}; // radians - last known good servo arm rotation
+  double ac = 0.0;          // radians - control surface rotation
 
 
   // Draw scaling params

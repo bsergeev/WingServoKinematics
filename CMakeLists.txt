@@ -16,6 +16,7 @@ set(include_dirs  "${PROJECT_SOURCE_DIR}/src")
 set(headers
   src/mainwindow.h
   src/glwidget.h
+  src/util.h
 )
 set(sources
   src/main.cpp

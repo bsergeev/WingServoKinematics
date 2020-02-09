@@ -16,7 +16,7 @@ MainWindow::MainWindow()
 
     m_servoSlider = createSlider();
     connect(m_servoSlider, &QSlider::valueChanged, 
-            [this](int servoPercent) { m_glWidget->setServoRotation(-0.4 * servoPercent); }); // 100% of servo travel equals to 40 degrees
+            [this](int servoPercent) { m_glWidget->setServoRotation(GLWidget::percent2Radian(-servoPercent)); }); 
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     QHBoxLayout* container = new QHBoxLayout;
@@ -60,8 +60,8 @@ void MainWindow::setStateText(const QString& txt) {
   m_stateLabel->setText(txt);
 }
 
-void MainWindow::setSliderDegree(int degrees) {
-  const int sliderValue = std::clamp<int>(-2.5*degrees, m_servoSlider->minimum(), m_servoSlider->maximum());
+void MainWindow::setSliderDegree(RadianValue angle) {
+  const int sliderValue = std::clamp<int>(-GLWidget::radian2Percent(angle), m_servoSlider->minimum(), m_servoSlider->maximum());
   m_servoSlider->setValue(sliderValue);
   update();
 }

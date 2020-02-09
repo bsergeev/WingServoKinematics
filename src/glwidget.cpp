@@ -6,7 +6,6 @@
 #include <QPoint>
 
 #include <math.h>
-#include <iostream> // <<< DEBUG
 
 GLWidget::GLWidget(MainWindow* parent)
   : QOpenGLWidget(parent)
@@ -15,8 +14,8 @@ GLWidget::GLWidget(MainWindow* parent)
   setMinimumSize(900, 300);
 }
 
-void GLWidget::setServoRotation(int degrees) {
-  as = degrees * DGR_TO_RADIAN;
+void GLWidget::setServoRotation(RadianValue angle) {
+  as = angle;
   update();
 }
 
@@ -28,8 +27,8 @@ void GLWidget::initializeGL() {
 
 bool GLWidget::calculatePositions() {
   // Initial coordinates for as = 0
-  const double x0i = -ls*sin(bs);
-  const double y0i = ls*cos(bs);
+  const double x0i = -ls*sin(bs + as0);
+  const double y0i =  ls*cos(bs + as0);
   const double x3i = xc - lc*sin(bc);
   const double y3i = lc*cos(bc);
   L = sqrt(pow(x3i-x0i, 2.0) + pow(y3i-y0i, 2.0));
@@ -47,7 +46,7 @@ bool GLWidget::calculatePositions() {
   const double d = sqrt(dx*dx + dy*dy);
   if (d > L + lc) {
     as = lastGoodAs;
-    m_parent->setSliderDegree(as / DGR_TO_RADIAN);
+    m_parent->setSliderDegree(as);
     m_parent->setStateText(state + tr(" - Linkage bind"));
     return false;
   }
@@ -66,7 +65,7 @@ bool GLWidget::calculatePositions() {
   const bool dnExceeded = (ac > 0.0)?  ac > ac_MAXdn : false;
   if (upExceeded || dnExceeded) {
     as = lastGoodAs;
-    m_parent->setSliderDegree(as / DGR_TO_RADIAN);
+    m_parent->setSliderDegree(as);
     state += tr(" - exceeded deflection %1").arg((upExceeded)? tr("UP") : tr("DOWN"));
   } else {
     lastGoodAs = as;
